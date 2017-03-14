@@ -2,9 +2,13 @@ package fr.ec.producthunt.ui;
 
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.ProgressBar;
@@ -62,6 +66,27 @@ public class DetailActivity extends AppCompatActivity {
       return intent.getExtras().getString(POST_URL_KEY);
     }else {
       throw new IllegalStateException("Il faut passer l'url du post");
+    }
+  }
+
+  @Override public boolean onCreateOptionsMenu(Menu menu) {
+
+    //Attacher le main menu au menu de l'activity
+    MenuInflater menuInflater = getMenuInflater();
+    menuInflater.inflate(R.menu.detail, menu);
+
+    return true;
+  }
+
+  @Override public boolean onOptionsItemSelected(MenuItem item) {
+    switch (item.getItemId()) {
+
+      case R.id.openinbrowser:
+        Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(obtainPostUrlFromIntent()));
+        startActivity(browserIntent);
+        return true;
+      default:
+        return super.onOptionsItemSelected(item);
     }
   }
 }
