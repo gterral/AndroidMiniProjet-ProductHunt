@@ -6,6 +6,7 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -31,6 +32,7 @@ public class MainActivity extends AppCompatActivity {
 
   private PostAdapter adapter;
   private ListView listView;
+  private SwipeRefreshLayout swipeRefreshPosts;
   private ProgressBar progressBar;
   private ViewAnimator viewAnimator;
   private ProductHuntDbHelper dbHelper;
@@ -44,6 +46,7 @@ public class MainActivity extends AppCompatActivity {
     setSupportActionBar(toolbar);
     setTitle(R.string.app_name);
 
+    swipeRefreshPosts = (SwipeRefreshLayout) findViewById(R.id.swipe_to_refresh_posts);
     listView = (ListView) findViewById(R.id.listview);
     adapter = new PostAdapter();
     listView.setAdapter(adapter);
@@ -64,6 +67,14 @@ public class MainActivity extends AppCompatActivity {
     viewAnimator.setDisplayedChild(1);
 
     dbHelper = new ProductHuntDbHelper(this);
+
+    swipeRefreshPosts.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+      @Override
+      public void onRefresh() {
+        refreshPosts();
+        swipeRefreshPosts.setRefreshing(false);
+      }
+    });
 
     loadPosts();
 
@@ -121,6 +132,8 @@ public class MainActivity extends AppCompatActivity {
       viewAnimator.setDisplayedChild(1);
 
 
+
+
     }
   }
 
@@ -162,7 +175,7 @@ public class MainActivity extends AppCompatActivity {
   public boolean isOnline() {
 
     ConnectivityManager connectivityManager =
-        (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+            (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
     NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
     if (networkInfo != null && networkInfo.isConnectedOrConnecting()) {
       return true;
