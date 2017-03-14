@@ -35,7 +35,7 @@ public class DataProvider {
     return list;
   }
 
-  public static String getPostsFromWeb() {
+  public static String getPostsFromWeb(Long startIndex) {
 
     HttpURLConnection urlConnection = null;
     BufferedReader reader = null;
@@ -45,8 +45,13 @@ public class DataProvider {
 
     try {
       // Construire l' URL de l'API ProductHunt
-      URL url = new URL(
-          "https://api.producthunt.com/v1/posts?access_token=cd567777bbbfa3108bc701cbcd8b944bab23841dee7b83c39ea8e330972ac08c");
+      String string_url = "https://api.producthunt.com/v1/posts/all?access_token=cd567777bbbfa3108bc701cbcd8b944bab23841dee7b83c39ea8e330972ac08c";
+
+      if(startIndex != 0) {
+        string_url += "&newer="+startIndex;
+      }
+
+      URL url = new URL(string_url);
 
       // Creer de la requête http vers  l'API ProductHunt , et ouvrir la connexion
       urlConnection = (HttpURLConnection) url.openConnection();
@@ -109,11 +114,23 @@ public class DataProvider {
   }
 
   public static boolean syncPost(ProductHuntDbHelper dbHelper) {
-    String postJson = getPostsFromWeb();
-    List<Post> list = JsonPostParser.jsonToPosts(postJson);
-
-    int nb = 0;
+    Long startIndex;
+    String postJson;
+    List<Post> list;
     PostDao postDao = new PostDao(dbHelper);
+
+    // Get last post ID
+    startIndex = postDao.getLastPostId();
+    Log.d(TAG, "syncPost: "+postDao.getLastPostId());
+
+    // Call the API for last posts
+    postJson = getPostsFromWeb(startIndex);
+
+    // Parse the JSON into posts
+    list = JsonPostParser.jsonToPosts(postJson);
+
+    // Save posts in the db
+    int nb = 0;
     for (Post post : list) {
       postDao.save(post);
       nb++;
