@@ -35,10 +35,21 @@ public class PostAdapter extends BaseAdapter {
     return position;
   }
 
+  @Override
+  public int getViewTypeCount() { return 2; }
+
+  @Override
+  public int getItemViewType(int position) {
+    return position == 0 ? 0 : 1;
+  }
+
   @Override public View getView(int position, View convertView, ViewGroup parent) {
 
     if(convertView == null) {
+      if(position != 0)
         convertView = LayoutInflater.from(parent.getContext()).inflate(R.layout.item,parent, false);
+      else
+        convertView = LayoutInflater.from(parent.getContext()).inflate(R.layout.big_item,parent, false);
     }
 
     Post post = datasource.get(position);
