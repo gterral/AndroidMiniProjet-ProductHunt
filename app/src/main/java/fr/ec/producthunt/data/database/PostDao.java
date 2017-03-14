@@ -23,7 +23,6 @@ public class PostDao {
 
   public List<Post> retrievePosts() {
 
-
     Cursor cursor = productHuntDbHelper.getReadableDatabase()
         .query(DataBaseContract.PostTable.TABLE_NAME,
             DataBaseContract.PostTable.PROJECTIONS,
@@ -39,9 +38,9 @@ public class PostDao {
         post.setId(cursor.getInt(0));
         post.setTitle(cursor.getString(1));
         post.setSubTitle(cursor.getString(2));
-        post.setUrlImage(cursor.getString(3));
-        post.setPostUrl(cursor.getString(4));
-
+        post.setCommentCount(cursor.getInt(3));
+        post.setUrlImage(cursor.getString(4));
+        post.setPostUrl(cursor.getString(5));
         posts.add(post);
 
 

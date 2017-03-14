@@ -15,11 +15,13 @@ public class ProductHuntDbHelper extends SQLiteOpenHelper {
 
   @Override public void onCreate(SQLiteDatabase db) {
     db.execSQL(DataBaseContract.PostTable.SQL_CREATE_POST_TABLE);
+    db.execSQL(DataBaseContract.CommentTable.SQL_CREATE_COMMENT_TABLE);
   }
 
   @Override public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
     onUpgrade(db, oldVersion, newVersion);
     db.execSQL(DataBaseContract.PostTable.SQL_DROP_POST_TABLE);
+    db.execSQL(DataBaseContract.CommentTable.SQL_DROP_COMMENT_TABLE);
     onCreate(db);
   }
 }

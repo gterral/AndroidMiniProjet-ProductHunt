@@ -11,9 +11,18 @@ public class Post {
   int id;
   String title;
   String subTitle;
+  int commentCount;
   private String urlImage;
   private Bitmap image;
   private String postUrl;
+
+  public int getCommentCount() {
+    return commentCount;
+  }
+
+  public void setCommentCount(int commentCount) {
+    this.commentCount = commentCount;
+  }
 
   public String getTitle() {
     return title;
@@ -68,6 +77,7 @@ public class Post {
     contentValues.put(DataBaseContract.PostTable.ID_COLUMN,id);
     contentValues.put(DataBaseContract.PostTable.TITLE_COLUMN,title);
     contentValues.put(DataBaseContract.PostTable.SUBTITLE_COLUMN,subTitle);
+    contentValues.put(DataBaseContract.PostTable.COMMENT_COUNT_COLUMN,commentCount);
     contentValues.put(DataBaseContract.PostTable.IMAGE_URL_COLUMN,urlImage);
     contentValues.put(DataBaseContract.PostTable.POST_URL_COLUMN,postUrl);
     return contentValues;

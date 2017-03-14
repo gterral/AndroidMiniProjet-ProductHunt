@@ -46,7 +46,8 @@ public class PostAdapter extends BaseAdapter {
     title.setText(post.getTitle());
     TextView subTitle = (TextView) convertView.findViewById(R.id.sub_title);
     subTitle.setText(post.getSubTitle());
-
+    TextView commentCount = (TextView) convertView.findViewById(R.id.comment_count);
+    commentCount.setText(String.valueOf(post.getCommentCount()) + " commentaires");
     ImageView imageView = (ImageView) convertView.findViewById(R.id.img_product);
     Picasso.with(parent.getContext()).load(post.getUrlImage()).into(imageView);
     return convertView;

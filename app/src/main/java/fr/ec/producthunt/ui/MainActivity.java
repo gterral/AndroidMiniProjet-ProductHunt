@@ -53,7 +53,7 @@ public class MainActivity extends AppCompatActivity {
         Post post = (Post) adapter.getItem(position);
         //Toast.makeText(MainActivity.this,post.getTitle(),Toast.LENGTH_SHORT).show();
 
-        navigateToDetailActivity(post);
+        navigateToCommentActivity(post);
       }
     });
 
@@ -72,6 +72,13 @@ public class MainActivity extends AppCompatActivity {
   private void navigateToDetailActivity(Post post) {
     Intent intent = new Intent(MainActivity.this,DetailActivity.class);
     intent.putExtra(DetailActivity.POST_URL_KEY,post.getPostUrl());
+    startActivity(intent);
+  }
+
+  private void navigateToCommentActivity(Post post) {
+    Intent intent = new Intent(MainActivity.this,CommentActivity.class);
+    intent.putExtra(CommentActivity.POST_ID_KEY,String.valueOf(post.getId()));
+    intent.putExtra(CommentActivity.POST_TITLE_KEY,post.getTitle());
     startActivity(intent);
   }
 

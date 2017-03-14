@@ -1,6 +1,7 @@
 package fr.ec.producthunt.data;
 
 import android.util.Log;
+
 import fr.ec.producthunt.data.database.PostDao;
 import fr.ec.producthunt.data.database.ProductHuntDbHelper;
 import fr.ec.producthunt.data.model.Post;
@@ -28,6 +29,7 @@ public class DataProvider {
       Post post = new Post();
       post.setTitle("Gear 360 " + i);
       post.setSubTitle("Capture stunning 360 video for virtual reality, by Samsung");
+      post.setCommentCount(10);
 
       list.add(post);
     }
@@ -110,7 +112,7 @@ public class DataProvider {
 
   public static boolean syncPost(ProductHuntDbHelper dbHelper) {
     String postJson = getPostsFromWeb();
-    List<Post> list = JsonPostParser.jsonToPosts(postJson);
+    List<Post> list = JsonParser.jsonToPosts(postJson);
 
     int nb = 0;
     PostDao postDao = new PostDao(dbHelper);
@@ -126,5 +128,6 @@ public class DataProvider {
     PostDao postDao = new PostDao(dbHelper);
     return postDao.retrievePosts();
   }
+
 }
 

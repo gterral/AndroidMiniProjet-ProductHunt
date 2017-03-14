@@ -1,5 +1,6 @@
 package fr.ec.producthunt.data;
 
+import fr.ec.producthunt.data.model.Comment;
 import fr.ec.producthunt.data.model.Post;
 import java.util.ArrayList;
 import java.util.List;
@@ -10,7 +11,7 @@ import org.json.JSONObject;
 /**
  * @author Mohammed Boukadir  @:mohammed.boukadir@gmail.com
  */
-public class JsonPostParser {
+public class JsonParser {
 
   public static List<Post> jsonToPosts(String json) {
 
@@ -41,6 +42,7 @@ public class JsonPostParser {
     post.setId(postJson.getInt("id"));
     post.setTitle(postJson.getString("name"));
     post.setSubTitle(postJson.getString("tagline"));
+    post.setCommentCount(postJson.getInt("comments_count"));
     post.setPostUrl(postJson.getString("redirect_url"));
 
     //Image url
@@ -57,5 +59,37 @@ public class JsonPostParser {
     post.setUrlImage(imageUrl);
 
     return post;
+  }
+
+  public static List<Comment> jsonToComments(String json) {
+
+    try {
+
+      JSONObject commentsResponse = new JSONObject(json);
+      JSONArray commentsJson = commentsResponse.getJSONArray("comments");
+
+      int size = commentsJson.length();
+
+      ArrayList<Comment> comments = new ArrayList(size);
+
+      for (int i = 0; i < commentsJson.length(); i++) {
+        JSONObject commentJson = (JSONObject) commentsJson.get(i);
+
+        comments.add(jsonToComment(commentJson));
+      }
+
+      return comments;
+    } catch (JSONException e) {
+      e.printStackTrace();
+      return null;
+    }
+  }
+
+  private static Comment jsonToComment(JSONObject commentJson) throws JSONException {
+    Comment comment = new Comment();
+    comment.setId(commentJson.getInt("id"));
+    comment.setContent(commentJson.getString("body"));
+    comment.setCreatedAt(commentJson.getString("created_at"));
+    return comment;
   }
 }
