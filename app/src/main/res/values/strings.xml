@@ -4,9 +4,6 @@
   <string name="menu_refresh_title">Actualiser</string>
   <string name="empty">Veuillez Actualiser</string>
   <string name="title_activity_detail">DetailActivity</string>
-<<<<<<< HEAD
   <string name="title_activity_comment">CommentActivity</string>
-=======
   <string name="openinbrowser">Open in Browser</string>
->>>>>>> d15d1967bc345b317c387d22929f1096ca24aba2
 </resources>

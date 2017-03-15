@@ -116,15 +116,10 @@ public class DataProvider {
   }
 
   public static boolean syncPost(ProductHuntDbHelper dbHelper) {
-<<<<<<< HEAD
-    String postJson = getPostsFromWeb();
-    List<Post> list = JsonParser.jsonToPosts(postJson);
-=======
     Long startIndex;
     String postJson;
     List<Post> list;
     PostDao postDao = new PostDao(dbHelper);
->>>>>>> d15d1967bc345b317c387d22929f1096ca24aba2
 
     // Get last post ID
     startIndex = postDao.getLastPostId();
@@ -134,7 +129,7 @@ public class DataProvider {
     postJson = getPostsFromWeb(startIndex);
 
     // Parse the JSON into posts
-    list = JsonPostParser.jsonToPosts(postJson);
+    list = JsonParser.jsonToPosts(postJson);
 
     // Save posts in the db
     int nb = 0;
