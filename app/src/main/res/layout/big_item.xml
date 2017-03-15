@@ -40,5 +40,19 @@
         android:text="Capture stunning 360 video for virtual reality, by Samsung"
         />
 
+    <TextView
+        android:id="@+id/comment_count"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:textAppearanceListItemSecondary"
+        android:padding="2dp"
+        android:textColor="#25383C"
+        android:layout_marginStart="4dp"
+        android:layout_marginLeft="4dp"
+        android:layout_below="@id/sub_title"
+        android:layout_toRightOf="@id/img_product"
+        android:text="32 commentaires"
+        />
+
 
 </LinearLayout>
