@@ -22,7 +22,7 @@ public class DataProviderComment {
     private static final String TAG = "DataProviderComment";
 
 
-    public static String getCommentsFromWeb(String postId) {
+    public static String getCommentsFromWeb(String postId, String lastCommentId) {
 
         HttpURLConnection urlConnection = null;
         BufferedReader reader = null;
@@ -30,12 +30,12 @@ public class DataProviderComment {
         // Contiendra la réponse JSON brute sous forme de String .
         String comments = null;
         String post_id = postId;
-        String lastCommentId= "1";
+        String last_comment_id=lastCommentId;
 
         try {
             // Construire l' URL de l'API ProductHunt
             URL url = new URL(
-                    "https://api.producthunt.com/v1/posts/" + post_id +"/comments/?newer="+lastCommentId+"&access_token=cd567777bbbfa3108bc701cbcd8b944bab23841dee7b83c39ea8e330972ac08c");
+                    "https://api.producthunt.com/v1/posts/" + post_id +"/comments/?newer="+last_comment_id+"&access_token=cd567777bbbfa3108bc701cbcd8b944bab23841dee7b83c39ea8e330972ac08c");
 
             // Creer de la requête http vers  l'API ProductHunt , et ouvrir la connexion
             urlConnection = (HttpURLConnection) url.openConnection();
@@ -81,11 +81,14 @@ public class DataProviderComment {
     }
 
     public static boolean syncComment(ProductHuntDbHelper dbHelper,String postId) {
-        String postJson = getCommentsFromWeb(postId);
+
+        CommentDao commentDao = new CommentDao(dbHelper);
+        String lastCommentId = commentDao.getLastCommentId(postId);
+
+        String postJson = getCommentsFromWeb(postId,lastCommentId);
         List<Comment> list = JsonParser.jsonToComments(postJson);
 
         int nb = 0;
-        CommentDao commentDao = new CommentDao(dbHelper);
         for (Comment comment : list) {
             commentDao.save(comment);
             nb++;
@@ -98,5 +101,6 @@ public class DataProviderComment {
         CommentDao commentDao = new CommentDao(dbHelper);
         return commentDao.retrieveComments(postId);
     }
+
 
 }

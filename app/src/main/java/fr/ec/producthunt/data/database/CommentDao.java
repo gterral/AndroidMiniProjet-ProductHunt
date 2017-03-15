@@ -23,6 +23,16 @@ public class CommentDao {
                 .insert(DataBaseContract.CommentTable.TABLE_NAME, null, comment.toContentValues());
     }
 
+    public String getLastCommentId(String postId) {
+        String query = "SELECT "+DataBaseContract.CommentTable.ID_COLUMN+" from "+ DataBaseContract.CommentTable.TABLE_NAME + " where " + DataBaseContract.CommentTable.POST_ID_COLUMN + " = " + postId + " order by "+DataBaseContract.CommentTable.ID_COLUMN+" DESC limit 1";
+        Cursor c = productHuntDbHelper.getWritableDatabase().rawQuery(query, null);
+        if (c != null && c.moveToFirst()) {
+            return c.getString(0); //The 0 is the column index, we only have 1 column, so the index is 0
+        }
+        return "0";
+    }
+
+
     public List<Comment> retrieveComments(String postId) {
 
         String[] postIdArray = {postId};
@@ -52,7 +62,6 @@ public class CommentDao {
             } while (cursor.moveToNext());
         }
 
-        System.out.println(comments);
         return comments;
     }
 }
