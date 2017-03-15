@@ -44,6 +44,7 @@ public class JsonParser {
     post.setSubTitle(postJson.getString("tagline"));
     post.setCommentCount(postJson.getInt("comments_count"));
     post.setPostUrl(postJson.getString("redirect_url"));
+    post.setCreatedAt(postJson.getString("created_at"));
 
     //Image url
     /*"thumbnail": {
@@ -90,6 +91,7 @@ public class JsonParser {
     comment.setId(commentJson.getInt("id"));
     comment.setContent(commentJson.getString("body"));
     comment.setCreatedAt(commentJson.getString("created_at"));
+    comment.setPostId(String.valueOf(commentJson.getInt("post_id")));
     return comment;
   }
 }

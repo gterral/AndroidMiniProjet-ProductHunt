@@ -93,10 +93,10 @@ public class DataProviderComment {
         return nb>0;
     }
 
-    public static List<Comment> getCommentsFromDatabase(ProductHuntDbHelper dbHelper) {
+    public static List<Comment> getCommentsFromDatabase(ProductHuntDbHelper dbHelper,String postId) {
 
         CommentDao commentDao = new CommentDao(dbHelper);
-        return commentDao.retrieveComments();
+        return commentDao.retrieveComments(postId);
     }
 
 }

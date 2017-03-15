@@ -26,7 +26,7 @@ public class PostDao {
     Cursor cursor = productHuntDbHelper.getReadableDatabase()
         .query(DataBaseContract.PostTable.TABLE_NAME,
             DataBaseContract.PostTable.PROJECTIONS,
-            null, null, null, null, null);
+            null, null, null, null, DataBaseContract.PostTable.ORDER_BY_DATE);
 
     List<Post> posts = new ArrayList<>(cursor.getCount());
 

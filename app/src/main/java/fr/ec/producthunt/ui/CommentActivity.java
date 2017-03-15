@@ -97,8 +97,8 @@ public class CommentActivity extends AppCompatActivity {
 
         @Override
         protected List<Comment> doInBackground(Void... params) {
-            System.out.println("on est ici");
-            return DataProviderComment.getCommentsFromDatabase(dbHelper);
+            String postId = obtainPostIdFromIntent();
+            return DataProviderComment.getCommentsFromDatabase(dbHelper,postId);
         }
 
         @Override
@@ -143,10 +143,6 @@ public class CommentActivity extends AppCompatActivity {
             }
 
         }
-    }
-
-    private void loadCommentswithId(int postId) {
-        //TODO gérer l'id du post
     }
 
     private void loadComments() {

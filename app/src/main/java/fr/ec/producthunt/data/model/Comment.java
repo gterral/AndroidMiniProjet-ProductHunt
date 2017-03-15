@@ -12,6 +12,7 @@ public class Comment {
     private int id;
     private String content;
     private String createdAt;
+    private String postId;
 
     public int getId() {
         return id;
@@ -37,11 +38,22 @@ public class Comment {
         this.createdAt = createdAt;
     }
 
+    public String getPostId() {
+        return postId;
+    }
+
+    public void setPostId(String postId) {
+        this.postId = postId;
+    }
+
     public ContentValues toContentValues() {
         ContentValues contentValues = new ContentValues();
         contentValues.put(DataBaseContract.CommentTable.ID_COLUMN,id);
         contentValues.put(DataBaseContract.CommentTable.CONTENT_COLUMN,content);
         contentValues.put(DataBaseContract.CommentTable.CREATED_AT_COLUMN,createdAt);
+        contentValues.put(DataBaseContract.CommentTable.POST_ID_COLUMN,postId);
         return contentValues;
     }
+
+
 }

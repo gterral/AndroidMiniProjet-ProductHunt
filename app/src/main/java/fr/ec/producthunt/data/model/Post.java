@@ -12,9 +12,18 @@ public class Post {
   String title;
   String subTitle;
   int commentCount;
+  String createdAt;
   private String urlImage;
   private Bitmap image;
   private String postUrl;
+
+  public String getCreatedAt() {
+    return createdAt;
+  }
+
+  public void setCreatedAt(String createdAt) {
+    this.createdAt = createdAt;
+  }
 
   public int getCommentCount() {
     return commentCount;
@@ -80,6 +89,7 @@ public class Post {
     contentValues.put(DataBaseContract.PostTable.COMMENT_COUNT_COLUMN,commentCount);
     contentValues.put(DataBaseContract.PostTable.IMAGE_URL_COLUMN,urlImage);
     contentValues.put(DataBaseContract.PostTable.POST_URL_COLUMN,postUrl);
+    contentValues.put(DataBaseContract.PostTable.POST_CREATED_AT_COLUMN,createdAt);
     return contentValues;
   }
 

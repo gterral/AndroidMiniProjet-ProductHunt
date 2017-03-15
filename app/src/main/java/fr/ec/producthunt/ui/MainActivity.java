@@ -53,6 +53,7 @@ public class MainActivity extends AppCompatActivity {
         Post post = (Post) adapter.getItem(position);
         //Toast.makeText(MainActivity.this,post.getTitle(),Toast.LENGTH_SHORT).show();
 
+        //navigateToDetailActivity(post);
         navigateToCommentActivity(post);
       }
     });
