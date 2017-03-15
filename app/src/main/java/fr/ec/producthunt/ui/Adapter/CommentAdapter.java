@@ -43,7 +43,6 @@ public class CommentAdapter extends BaseAdapter {
         }
 
         Comment comment = datasource.get(position);
-        System.out.println(comment);
         TextView content = (TextView) convertView.findViewById(R.id.content);
         content.setText(comment.getContent());
         TextView createdAt = (TextView) convertView.findViewById(R.id.createdAt);
