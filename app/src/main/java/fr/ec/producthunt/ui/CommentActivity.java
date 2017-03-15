@@ -3,6 +3,7 @@ package fr.ec.producthunt.ui;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -40,6 +41,7 @@ public class CommentActivity extends AppCompatActivity {
     private ProgressBar progressBar;
     private ViewAnimator viewAnimator;
     private ProductHuntDbHelper dbHelper;
+    private SwipeRefreshLayout swipeRefreshComments;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,6 +65,15 @@ public class CommentActivity extends AppCompatActivity {
         viewAnimator.setDisplayedChild(1);
 
         dbHelper = new ProductHuntDbHelper(this);
+
+        swipeRefreshComments = (SwipeRefreshLayout) findViewById(R.id.swipe_to_refresh_comments);
+        swipeRefreshComments.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                refreshComments();
+                swipeRefreshComments.setRefreshing(false);
+            }
+        });
 
         loadComments();
 
