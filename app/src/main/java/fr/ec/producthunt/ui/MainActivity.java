@@ -61,6 +61,16 @@ public class MainActivity extends AppCompatActivity {
       }
     });
 
+    listView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener(){
+        @Override
+        public boolean onItemLongClick(AdapterView<?> adapterView, View view, int position, long id) {
+
+            Post post = (Post) adapter.getItem(position);
+            navigateToDetailActivity(post);
+            return true;
+        }
+    });
+      
     progressBar = (ProgressBar) findViewById(R.id.progress);
 
     viewAnimator = (ViewAnimator) findViewById(R.id.viewAnimator);
