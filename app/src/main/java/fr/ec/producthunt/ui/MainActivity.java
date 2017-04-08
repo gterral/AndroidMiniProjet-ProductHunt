@@ -1,11 +1,14 @@
 package fr.ec.producthunt.ui;
 
+import android.app.AlarmManager;
+import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.SystemClock;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -19,6 +22,7 @@ import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.ViewAnimator;
 import fr.ec.producthunt.R;
+import fr.ec.producthunt.data.RefreshReceiver;
 import fr.ec.producthunt.data.DataProvider;
 import fr.ec.producthunt.data.database.ProductHuntDbHelper;
 import fr.ec.producthunt.data.model.Post;
@@ -36,6 +40,9 @@ public class MainActivity extends AppCompatActivity {
   private ProgressBar progressBar;
   private ViewAnimator viewAnimator;
   private ProductHuntDbHelper dbHelper;
+
+  private AlarmManager alarmMgr;
+  private PendingIntent alarmIntent;
 
   @Override protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
@@ -88,6 +95,7 @@ public class MainActivity extends AppCompatActivity {
     });
 
     loadPosts();
+    scheduleAlarm();
 
   }
 
@@ -124,7 +132,7 @@ public class MainActivity extends AppCompatActivity {
     }
   }
 
-  private void refreshPosts() {
+  public void refreshPosts() {
     PostsAsyncTask postsAsyncTask = new PostsAsyncTask();
     postsAsyncTask.execute();
   }
@@ -139,7 +147,6 @@ public class MainActivity extends AppCompatActivity {
 
 
     @Override protected List<Post> doInBackground(Void... params) {
-
       return DataProvider.getPostsFromDatabase(dbHelper);
     }
 
@@ -148,9 +155,6 @@ public class MainActivity extends AppCompatActivity {
         adapter.showListPost(posts);
       }
       viewAnimator.setDisplayedChild(1);
-
-
-
 
     }
   }
@@ -181,7 +185,6 @@ public class MainActivity extends AppCompatActivity {
         viewAnimator.setDisplayedChild(1);
 
       }
-
     }
   }
 
@@ -201,4 +204,16 @@ public class MainActivity extends AppCompatActivity {
 
     return false;
   }
+
+  public void scheduleAlarm(){
+    Intent intent = new Intent(this, RefreshReceiver.class);
+    alarmIntent = PendingIntent.getBroadcast(this, 0, intent, 0);
+
+    alarmMgr = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+    alarmMgr.setRepeating(AlarmManager.ELAPSED_REALTIME,
+            SystemClock.elapsedRealtime() + 2 * 60 * 60 * 1000,
+            2 * 60 * 60 * 1000,
+            alarmIntent);
+  }
+
 }
