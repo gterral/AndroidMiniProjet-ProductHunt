@@ -2,8 +2,10 @@ package fr.ec.producthunt.ui;
 
 import android.app.AlarmManager;
 import android.app.PendingIntent;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
@@ -22,7 +24,6 @@ import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.ViewAnimator;
 import fr.ec.producthunt.R;
-import fr.ec.producthunt.data.RefreshReceiver;
 import fr.ec.producthunt.data.DataProvider;
 import fr.ec.producthunt.data.database.ProductHuntDbHelper;
 import fr.ec.producthunt.data.model.Post;
@@ -32,6 +33,8 @@ import java.util.List;
 public class MainActivity extends AppCompatActivity {
 
   private static final String TAG = "MainActivity";
+  public static final String ACTION = "fr.ec.producthunt.ui.MainActivity";
+
   public static final int NB_ITEM = 400;
 
   private PostAdapter adapter;
@@ -43,6 +46,15 @@ public class MainActivity extends AppCompatActivity {
 
   private AlarmManager alarmMgr;
   private PendingIntent alarmIntent;
+
+  // Ce BroadcastReceiver sera appellé toutes les 2 heures.
+  private BroadcastReceiver refreshReceiver = new BroadcastReceiver() {
+    @Override
+    public void onReceive(Context context, Intent intent) {
+      Log.d(TAG, "Refreshing listview");
+      refreshPosts();
+    }
+  };
 
   @Override protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
@@ -206,7 +218,11 @@ public class MainActivity extends AppCompatActivity {
   }
 
   public void scheduleAlarm(){
-    Intent intent = new Intent(this, RefreshReceiver.class);
+
+    IntentFilter intentFilter = new IntentFilter(ACTION + ".refreshReceiver");
+    registerReceiver(refreshReceiver, intentFilter);
+
+    Intent intent = new Intent(ACTION + ".refreshReceiver");
     alarmIntent = PendingIntent.getBroadcast(this, 0, intent, 0);
 
     alarmMgr = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
@@ -215,5 +231,12 @@ public class MainActivity extends AppCompatActivity {
             2 * 60 * 60 * 1000,
             alarmIntent);
   }
+
+  @Override
+  protected void onDestroy() {
+    unregisterReceiver(refreshReceiver);
+    super.onDestroy();
+  }
+
 
 }
