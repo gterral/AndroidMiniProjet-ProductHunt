@@ -1,11 +1,16 @@
 package fr.ec.producthunt.ui;
 
+import android.app.AlarmManager;
+import android.app.PendingIntent;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.SystemClock;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -28,6 +33,8 @@ import java.util.List;
 public class MainActivity extends AppCompatActivity {
 
   private static final String TAG = "MainActivity";
+  public static final String ACTION = "fr.ec.producthunt.ui.MainActivity";
+
   public static final int NB_ITEM = 400;
 
   private PostAdapter adapter;
@@ -36,6 +43,18 @@ public class MainActivity extends AppCompatActivity {
   private ProgressBar progressBar;
   private ViewAnimator viewAnimator;
   private ProductHuntDbHelper dbHelper;
+
+  private AlarmManager alarmMgr;
+  private PendingIntent alarmIntent;
+
+  // Ce BroadcastReceiver sera appellé toutes les 2 heures.
+  private BroadcastReceiver refreshReceiver = new BroadcastReceiver() {
+    @Override
+    public void onReceive(Context context, Intent intent) {
+      Log.d(TAG, "Refreshing listview");
+      refreshPosts();
+    }
+  };
 
   @Override protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
@@ -88,6 +107,7 @@ public class MainActivity extends AppCompatActivity {
     });
 
     loadPosts();
+    scheduleAlarm();
 
   }
 
@@ -124,7 +144,7 @@ public class MainActivity extends AppCompatActivity {
     }
   }
 
-  private void refreshPosts() {
+  public void refreshPosts() {
     PostsAsyncTask postsAsyncTask = new PostsAsyncTask();
     postsAsyncTask.execute();
   }
@@ -139,7 +159,6 @@ public class MainActivity extends AppCompatActivity {
 
 
     @Override protected List<Post> doInBackground(Void... params) {
-
       return DataProvider.getPostsFromDatabase(dbHelper);
     }
 
@@ -148,9 +167,6 @@ public class MainActivity extends AppCompatActivity {
         adapter.showListPost(posts);
       }
       viewAnimator.setDisplayedChild(1);
-
-
-
 
     }
   }
@@ -181,7 +197,6 @@ public class MainActivity extends AppCompatActivity {
         viewAnimator.setDisplayedChild(1);
 
       }
-
     }
   }
 
@@ -201,4 +216,27 @@ public class MainActivity extends AppCompatActivity {
 
     return false;
   }
+
+  public void scheduleAlarm(){
+
+    IntentFilter intentFilter = new IntentFilter(ACTION + ".refreshReceiver");
+    registerReceiver(refreshReceiver, intentFilter);
+
+    Intent intent = new Intent(ACTION + ".refreshReceiver");
+    alarmIntent = PendingIntent.getBroadcast(this, 0, intent, 0);
+
+    alarmMgr = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+    alarmMgr.setRepeating(AlarmManager.ELAPSED_REALTIME,
+            SystemClock.elapsedRealtime() + 2 * 60 * 60 * 1000,
+            2 * 60 * 60 * 1000,
+            alarmIntent);
+  }
+
+  @Override
+  protected void onDestroy() {
+    unregisterReceiver(refreshReceiver);
+    super.onDestroy();
+  }
+
+
 }

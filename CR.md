@@ -138,3 +138,34 @@ case R.id.openinbrowser:
   return true;
 ```
 De cette façon, on peut ouvrir un navigateur vers la publication.
+
+
+### Rafraichissement des publications toutes les 2 heures
+
+Pour mettre à jour l'application en background toutes les 2 heures, nous avons
+besoin de planifier une alarme. Cette dernière sera de type ELAPSED_REALTIME :
+en effet, ce type d'alarme n'est pas affecté par la timezone, et ne réveille
+pas l'application.
+
+On crée pour cela un *BroadcastReciever*, qui effectuera l'action désirée.
+On l'enregistre aussi dans le manifeste :
+```xml
+<receiver android:name=".data.RefreshReceiver"></receiver>
+```
+
+Dans l'activité principale, on crée alors une fonction *scheduleAlarm*, qui
+y fera appel toutes les deux heures :
+```java
+public void scheduleAlarm(){
+  Intent intent = new Intent(this, RefreshReceiver.class);
+  alarmIntent = PendingIntent.getBroadcast(this, 0, intent, 0);
+
+  alarmMgr = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+  alarmMgr.setRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP,
+          SystemClock.elapsedRealtime() + 2 * 60 * 60 * 1000,
+          2 * 60 * 60 * 1000,
+          alarmIntent);
+}
+```
+
+On appelle cette fonction dans le onCreate.
