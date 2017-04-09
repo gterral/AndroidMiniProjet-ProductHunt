@@ -24,7 +24,7 @@ public class CommentDao {
     }
 
     public String getLastCommentId(String postId) {
-        String query = "SELECT "+DataBaseContract.CommentTable.ID_COLUMN+" from "+ DataBaseContract.CommentTable.TABLE_NAME + " where " + DataBaseContract.CommentTable.POST_ID_COLUMN + " = " + postId + " order by "+DataBaseContract.CommentTable.ID_COLUMN+" DESC limit 1";
+        String query = "SELECT "+DataBaseContract.CommentTable.ID_COLUMN+" from "+ DataBaseContract.CommentTable.TABLE_NAME + " where " + DataBaseContract.CommentTable.POST_ID_COLUMN + " = " + postId + " order by "+DataBaseContract.CommentTable.ID_COLUMN +" DESC limit 1";
         Cursor c = productHuntDbHelper.getWritableDatabase().rawQuery(query, null);
         if (c != null && c.moveToFirst()) {
             return c.getString(0); //The 0 is the column index, we only have 1 column, so the index is 0
@@ -56,6 +56,10 @@ public class CommentDao {
                 comment.setContent(cursor.getString(1));
                 comment.setCreatedAt(cursor.getString(2));
                 comment.setPostId(postId);
+                comment.setUserName(cursor.getString(4));
+                comment.setUserUsername(cursor.getString(5));
+                comment.setUserImageUrl(cursor.getString(6));
+
                 comments.add(comment);
 
 

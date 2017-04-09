@@ -50,6 +50,16 @@ public class CommentActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+        toolbar.setNavigationIcon(R.drawable.abc_ic_ab_back_mtrl_am_alpha);
+
+        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                refreshComments();
+                startActivity(new Intent(getApplicationContext(), MainActivity.class));
+            }
+        });
+
         int postId = parseInt(obtainPostIdFromIntent());
         String postTitle = obtainPostTitleFromIntent();
         setTitle(postTitle);

@@ -5,17 +5,38 @@
     android:layout_height="match_parent"
     android:layout_margin="16dp"
     >
+
+    <ImageView
+        android:id="@+id/user_image"
+        android:layout_width="64dp"
+        android:layout_height="64dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginTop="16dp"
+        android:background="@android:color/darker_gray"
+        />
+
+    <TextView
+        android:id="@+id/author"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:textAppearanceListItem"
+        android:layout_marginBottom="2dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginStart="4dp"
+        android:textStyle="bold"
+        android:layout_toRightOf="@id/user_image"
+        android:text="Nom de l'auteur"/>
+
     <TextView
         android:id="@+id/content"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:textAppearance="?android:textAppearanceListItem"
-        android:padding="2dp"
-        android:layout_marginBottom="2dp"
-        android:layout_marginStart="4dp"
-        android:layout_marginLeft="4dp"
+        android:textColor="@color/textGrey"
+        android:padding="16dp"
         android:text="Test contenu du commentaire"
-        />
+        android:layout_below="@+id/user_image"
+        android:layout_alignEnd="@+id/author" />
 
     <TextView
         android:id="@+id/createdAt"
@@ -23,10 +44,9 @@
         android:layout_height="wrap_content"
         android:textAppearance="?android:textAppearanceListItemSecondary"
         android:padding="2dp"
-        android:layout_marginStart="4dp"
         android:layout_marginLeft="4dp"
-        android:layout_below="@id/content"
         android:text="2017-03-14 16:14:24"
-        />
+        android:layout_above="@+id/content"
+        android:layout_alignStart="@+id/author" />
 
 </RelativeLayout>
