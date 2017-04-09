@@ -1,5 +1,7 @@
 package fr.ec.producthunt.data;
 
+import android.util.Log;
+
 import fr.ec.producthunt.data.model.Comment;
 import fr.ec.producthunt.data.model.Post;
 import java.util.ArrayList;
@@ -92,6 +94,14 @@ public class JsonParser {
     comment.setContent(commentJson.getString("body"));
     comment.setCreatedAt(commentJson.getString("created_at"));
     comment.setPostId(String.valueOf(commentJson.getInt("post_id")));
+
+    JSONObject user = commentJson.getJSONObject("user");
+    comment.setUserName(String.valueOf(user.getString("name")));
+    comment.setUserUsername(String.valueOf(user.getString("username")));
+
+    JSONObject user_images = user.getJSONObject("image_url");
+    comment.setUserImageUrl(String.valueOf(user_images.getString("64px")));
+
     return comment;
   }
 }

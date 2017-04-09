@@ -47,6 +47,10 @@ public class CommentAdapter extends BaseAdapter {
         content.setText(comment.getContent());
         TextView createdAt = (TextView) convertView.findViewById(R.id.createdAt);
         createdAt.setText(comment.getCreatedAt());
+        TextView userName = (TextView) convertView.findViewById(R.id.author);
+        userName.setText(comment.getUserName() + " - @" + comment.getUserUsername());
+        ImageView userImage = (ImageView) convertView.findViewById(R.id.user_image);
+        Picasso.with(parent.getContext()).load(comment.getUserImageUrl()).into(userImage);
 
         return convertView;
     }

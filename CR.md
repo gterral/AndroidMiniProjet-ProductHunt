@@ -24,9 +24,8 @@ img[alt=screenshot]{
 
 ## Introduction
 
-Pour ce TP de conception d'application Android, blablabla.
-
-Nous repartons de l'application codée par Mohammed lors des TP, dont voici une capture d'écran :
+Pour ce TP de conception d'application Android, nous repartons de l'application
+codée par Mohammed lors des TP, dont voici une capture d'écran :
 ![screenshot](./images/Screenshot_begin.png)
 
 ## Publications
@@ -98,6 +97,7 @@ swipeRefreshPosts.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener(
 });
 ```
 Le fait d'avoir ajouté la ligne avec `setRefreshing(false)` permet d'arrêter l'icône de rafraichissement. En effet, cette animation rentre en conflit avec l'animation de chargement plein écran déjà mis en place.
+
 ### Récupération des dernières publications
 On commence par écrire une nouvelle méthode  dans le DAO pour récupérer l'ID du dernier post dans la base de données :
 ```java
@@ -140,32 +140,87 @@ case R.id.openinbrowser:
 De cette façon, on peut ouvrir un navigateur vers la publication.
 
 
+### Affichage des commentaires
+La récupération et l'affichage des commentaires suit une logique similaire à
+celle des publications.
+* un modèle ``Comment`` regroupe les propriétés de chaque commentaires
+* on spécifie dans le fichier ``DataBaseContract`` la structure de la table
+associée
+* un ``CommentDao`` permet d'effectuer les opérations de lecture et écriture
+ dans la table SQLite
+* on définie les opérations ``jsonToComments()`` et ``jsonToComment()`` dans la
+class ``JsonParser``
+
+Nous avons fait le choix de récupérer avant tout :
+* l'id des commentaires
+* leur contenu
+* leur date de publications
+* le nom, l'username et l'avatar de leur auteur
+
+On accède au fil des commentaires via un click court sur un élément de la listview
+de la ``MainActivity``. Un click long amène à l'activité de détail.
+
+Dans la toolbar, un bouton permet de revenir en arrière. Cette action déclenche
+aussi le rafraichissement des commentaires.
+
+```java
+toolbar.setNavigationIcon(R.drawable.abc_ic_ab_back_mtrl_am_alpha);
+
+toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+    @Override
+    public void onClick(View v) {
+        refreshComments();
+        startActivity(new Intent(getApplicationContext(), MainActivity.class));
+    }
+});
+```
+
+Le SwipeToRefresh est implémenté de la même manière que pour les posts.
+
 ### Rafraichissement des publications toutes les 2 heures
 
 Pour mettre à jour l'application en background toutes les 2 heures, nous avons
 besoin de planifier une alarme. Cette dernière sera de type ELAPSED_REALTIME :
 en effet, ce type d'alarme n'est pas affecté par la timezone, et ne réveille
-pas l'application.
+pas l'appareil.
 
-On crée pour cela un *BroadcastReciever*, qui effectuera l'action désirée.
-On l'enregistre aussi dans le manifeste :
-```xml
-<receiver android:name=".data.RefreshReceiver"></receiver>
+On crée pour cela un *BroadcastReciever*, qui fera appel à la fonction
+permettant de raffraichir les publications :
+```java
+private BroadcastReceiver refreshReceiver = new BroadcastReceiver() {
+  @Override
+  public void onReceive(Context context, Intent intent) {
+    Log.d(TAG, "Refreshing listview");
+    refreshPosts();
+  }
+};
 ```
 
 Dans l'activité principale, on crée alors une fonction *scheduleAlarm*, qui
-y fera appel toutes les deux heures :
+y fera appel toutes les deux heures. On appelle ensuite cette fonction dans
+le onCreate().
 ```java
 public void scheduleAlarm(){
-  Intent intent = new Intent(this, RefreshReceiver.class);
+
+  IntentFilter intentFilter = new IntentFilter(ACTION + ".refreshReceiver");
+  registerReceiver(refreshReceiver, intentFilter);
+
+  Intent intent = new Intent(ACTION + ".refreshReceiver");
   alarmIntent = PendingIntent.getBroadcast(this, 0, intent, 0);
 
   alarmMgr = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
-  alarmMgr.setRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP,
+  alarmMgr.setRepeating(AlarmManager.ELAPSED_REALTIME,
           SystemClock.elapsedRealtime() + 2 * 60 * 60 * 1000,
           2 * 60 * 60 * 1000,
           alarmIntent);
 }
 ```
 
-On appelle cette fonction dans le onCreate.
+On veille à bien unregister le BroadcastReceiver en quittant l'application :
+```java
+@Override
+protected void onDestroy() {
+  unregisterReceiver(refreshReceiver);
+  super.onDestroy();
+}
+```
