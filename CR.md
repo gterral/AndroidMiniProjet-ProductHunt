@@ -120,6 +120,7 @@ public static String getPostsFromWeb(Long startIndex) { ... }
 ```
 On peut donc maintenant récupérer uniquement les nouveaux posts.
 
+## Vue détail des publications
 ### Ouverture de la publication dans un navigateur web
 Sur la vue détail, on ajoute un menu et un lien de menu.
 ```xml
@@ -139,8 +140,20 @@ case R.id.openinbrowser:
 ```
 De cette façon, on peut ouvrir un navigateur vers la publication.
 
+## Commentaires
 
-### Affichage des commentaires
+### Affichage du compteur de commentaire
+Pour afficher le compteur, nous avons tout d'abord rajouter un TextView dans l'activité Main.
+
+```java
+TextView commentCount = (TextView) convertView.findViewById(R.id.comment_count);
+    commentCount.setText(String.valueOf(post.getCommentCount()) + " commentaires");
+```
+
+Nous avons tout simplement rajouté un champ sur la classe Post. Le parser recupère une donnée de plus comments_count.
+
+
+### Récupération des commentaires
 La récupération et l'affichage des commentaires suit une logique similaire à
 celle des publications.
 * un modèle ``Comment`` regroupe les propriétés de chaque commentaires
@@ -157,9 +170,8 @@ Nous avons fait le choix de récupérer avant tout :
 * leur date de publications
 * le nom, l'username et l'avatar de leur auteur
 
-On accède au fil des commentaires via un click court sur un élément de la listview
-de la ``MainActivity``. Un click long amène à l'activité de détail.
 
+### Toolbar des commentaires
 Dans la toolbar, un bouton permet de revenir en arrière. Cette action déclenche
 aussi le rafraichissement des commentaires.
 
@@ -175,7 +187,76 @@ toolbar.setNavigationOnClickListener(new View.OnClickListener() {
 });
 ```
 
+On trouve également dans la toolbar, le nom du la publication en cours. 
+```java
+int postId = parseInt(obtainPostIdFromIntent());
+        String postTitle = obtainPostTitleFromIntent();
+        setTitle(postTitle);
+```
+
+Le title s'obtient grâce à un intent qu'on passe lorsqu'on appelle l'activité. Cf partie suivante : Gestion du click d'accès à l'activité.
+```java
+private String obtainPostTitleFromIntent() {
+
+        Intent intent = getIntent();
+        if(intent.getExtras().containsKey(POST_TITLE_KEY)) {
+            return intent.getExtras().getString(POST_TITLE_KEY);
+        }else {
+            throw new IllegalStateException("Il faut passer le titre du post");
+        }
+    }
+```
+
 Le SwipeToRefresh est implémenté de la même manière que pour les posts.
+
+## Code transversaux aux activités
+### Gestion du click d'accès aux activités
+
+Nous n'avons pas trouvé comment réaliser un click précis dans une liste view, nous avons donc réalisé un click différent. 
+On accède donc au fil des commentaires via un click court sur un élément de la listview
+de la ``MainActivity``. Un click long amène à l'activité de détail.
+Les méthodes d'appels aux activités : 
+
+```java
+   private void navigateToDetailActivity(Post post) {
+       Intent intent = new Intent(MainActivity.this,DetailActivity.class);
+       intent.putExtra(DetailActivity.POST_URL_KEY,post.getPostUrl());
+       startActivity(intent);
+     }
+   
+     private void navigateToCommentActivity(Post post) {
+       Intent intent = new Intent(MainActivity.this,CommentActivity.class);
+       intent.putExtra(CommentActivity.POST_ID_KEY,String.valueOf(post.getId()));
+       intent.putExtra(CommentActivity.POST_TITLE_KEY,post.getTitle());
+       startActivity(intent);
+     }
+```
+   
+Les appels aux activités : 
+```java
+listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+      @Override public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+
+        Post post = (Post) adapter.getItem(position);
+        //Toast.makeText(MainActivity.this,post.getTitle(),Toast.LENGTH_SHORT).show();
+
+        //navigateToDetailActivity(post);
+        navigateToCommentActivity(post);
+      }
+    });
+
+    listView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener(){
+        @Override
+        public boolean onItemLongClick(AdapterView<?> adapterView, View view, int position, long id) {
+
+            Post post = (Post) adapter.getItem(position);
+            navigateToDetailActivity(post);
+            return true;
+        }
+    });
+ }
+```
+
 
 ### Rafraichissement des publications toutes les 2 heures
 
